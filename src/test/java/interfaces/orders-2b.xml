@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<orders>
+    <order orderNumber="abc-123">
+        <orderItem quantity="1">
+            <product name="Snickers" isbn="123-456-78" unitPrice="1.00" taxable="true"/>
+        </orderItem>
+        <orderItem quantity="2">
+            <product taxable="false" name="Milky Way" isbn="234-56-789" unitPrice="1"/>
+        </orderItem>
+    </order>
+    <order orderNumber="abc-234">
+        <orderItem quantity="10">
+            <product name="Almond Joy" isbn="123-456-78" unitPrice="1.00" taxable="false"/>
+        </orderItem>
+        <orderItem quantity="10">
+            <product name="Mounds" isbn="234-56-789" unitPrice="1"/>
+        </orderItem>
+    </order>
+</orders>
