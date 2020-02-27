@@ -24,7 +24,7 @@ public abstract class Account {
         return this.customer;
     }
 
-    // getBalance() - Returns the avaiable balance (may be a decimal value)
+    // getBalance() - Returns the available balance (may be a decimal value)
     public double getBalance() {
         return this.balance;
     }

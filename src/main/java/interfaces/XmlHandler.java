@@ -1,56 +1,87 @@
-package interfaces;
+    package interfaces;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+    import org.xml.sax.Attributes;
+    import org.xml.sax.SAXException;
+    import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.ArrayList;
+    import java.util.ArrayList;
 
-public class XmlHandler extends DefaultHandler {
+    public class XmlHandler extends DefaultHandler {
 
-    private ArrayList<Order> orders = new ArrayList<Order>();  // ArrayList of all Orders
-    private Customer dummyCustomer = new Customer("Evans", "Brian", "123 W Brdige St", "13126");
-    private Account dummyAccount = new NonCommercialAccount("123-45-678", dummyCustomer);
-    private Order currentOrder; // Reference to the current Order being processed
-    private OrderItem currentOrderItem; // Reference to the current OrderItem being processed
-    private Product currentProduct;  // Reference to the current Product
+        private ArrayList<Order> orders = new ArrayList<Order>();  // ArrayList of all Orders
+        private Customer dummyCustomer = new Customer("Evans", "Brian", "123 W Brdige St", "13126");
+        private Account dummyAccount = new NonCommercialAccount("123-45-678", dummyCustomer);
+        private Order currentOrder; // Reference to the current Order being processed
+        private OrderItem currentOrderItem; // Reference to the current OrderItem being processed
+        private Product currentProduct;  // Reference to the current Product
 
 
-    @Override
-    public void startElement(String uri, String localName, String qName,
-                             Attributes attributes) throws SAXException {
-        System.out.println("Start element:" + qName);
+        @Override
+        public void startElement(String uri, String localName, String qName,
+                                 Attributes attributes) throws SAXException {
+            System.out.println("Start element:" + qName);
 
             // Handle the order element
-            // Instantiate the currentOrder with dummeyAccount
+            if (qName.equals("order")) {
 
+                // Instantiate the currentOrder with dummyAccount
+                currentOrder = new Order(attributes.getValue("orderNumber"), dummyAccount);
+
+            }
             // Handle orderItem element
-            // Get quantity attribute
-            // Instantiate the currentOrderItem
+            if (qName.equals("orderItem")) {
 
+                // Get quantity attribute
+                int quantity = Integer.parseInt(attributes.getValue("quantity"));
+
+                // Instantiate the currentOrderItem
+                currentOrderItem = new OrderItem(currentProduct, quantity);
+            }
             // Handle product element
-            // Get product attributes
+            if (qName.equals("product")) {
+                // Get product attributes
+                String name = attributes.getValue("name");
+                String isbn = attributes.getValue("isbn");
+                String price = attributes.getValue("unitPrice");
+                String type = attributes.getValue("taxable");
+
+
             // Instantiate the current Product based on taxable attribute
+            if (attributes.getValue("taxable") != null && type.contentEquals("true")) {
+                currentProduct = new TaxableProduct(name, isbn, Double.parseDouble(price));
+
+            } else {
+                currentProduct = new NonTaxableProduct(name, isbn, Double.parseDouble(price));
+            }
+        }
     }
+        @Override
+        public void endElement(String uri, String localName, String qName) throws SAXException {
+            System.out.println("End element:" + qName);
 
-    @Override
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        System.out.println("End element:" + qName);
+                // Handle order element
+            if (qName.equals("order")) {
 
-            // Handle order element
-            // Add currentOrder to list of orders
+                // Add currentOrder to list of orders
+                orders.add(currentOrder);
+            }
+                // Handle orderItem element
+            else if (qName.equals("orderItem")) {
 
-            // Handle orderItem element
-            // Associate currentOrderItem with currentOrder
-
+                // Associate currentOrderItem with currentOrder
+                currentOrder.addItem(currentOrderItem);
+            }
             // Handle product element
-            // Associate currentProduct with currentOrderItem
-    }
+            if (qName.equals("product")){
 
-    // Return a reference to array list
-    public ArrayList<Order> getOrders() {
-        return orders;
+                //Associate currentProduct with currentOrderItem
+                currentOrderItem.setProduct(currentProduct);
+            }
+        }
+        // Return a reference to array list
+        public ArrayList<Order> getOrders() {
+            return orders;
+        }
     }
-}
 
 
